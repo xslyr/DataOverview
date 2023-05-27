@@ -10,17 +10,17 @@ Current methods:
 Usage:
 
 import pandas as pd
-import dfview as ovw  #import a library
+import dfview as ovw  
 
 df = pd.read_csv('my_data.csv')
 
-# init our object
+### init our object
 describe = ovw.DataOverview(df)
 
-# showing only int columns 
+### showing only int columns 
 describe.show(type='int64')
 
-# showing only string columns 
+### showing only string columns 
 describe.show(type='object')
 
 ...
