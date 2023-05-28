@@ -60,25 +60,21 @@ class DataOverview:
 			aux = self.details
 		return aux
 	
-	def __extractDistrib(self, col, axis):
-		if axis == 1:
-			aux = self.df.loc[:,col].value_counts(ascending=False)
-			distrib_values = [["{} {}".format(e,aux[e])] for e in aux.to_dict()]
-			return pd.DataFrame( distrib_values , columns=[col], index=[i+1 for i in range(len(distrib_values))])
-		else:
-			aux = self.df.loc[:,col].value_counts(ascending=False)
-			distrib_values = [["{} {}".format(e,aux[e]) for e in aux.to_dict()]]
-			return pd.DataFrame( distrib_values , index=[col], columns=[i+1 for i in range(len(line[0]))])
+	def __extractDistrib(self, col):		
+		aux = self.df.loc[:,col].value_counts(ascending=False)
+		distrib_values = [["{} {}".format(e,aux[e])] for e in aux.to_dict()]
+		return pd.DataFrame( distrib_values , columns=[col], index=[i+1 for i in range(len(distrib_values))])
+	
 		
-	def obj_distrib(self, column_list=[], axis_return='columns', include_nulls=True):
-		axis_option=('lines','columns')
-		if axis_return not in axis_option:
-			raise ValueError("The axis_return parameter must be 'lines' or 'columns'. ")
+	def obj_distrib(self, column_list=[], axis=1, include_nulls=True):
+		axis_option=(0,1)
+		if axis not in axis_option:
+			raise ValueError("The axis parameter must be 0(lines) or 1(columns). ")
+		
 		df=self.show('object')
-		if len(column_list)==0:
-			aux = pd.concat( [self.__extractDistrib(col,1) for col in sdf], axis=1) if axis_return=='columns' else pd.concat( [self.__extractDistrib(col,0) for col in df], axis=0)
-		else:
-			aux = pd.concat( [self.__extractDistrib(col,1) for col in df[column_list]], axis=1) if axis_return=='columns' else pd.concat( [self.__extractDistrib(col,0) for col in df[column_list]], axis=0)
+		aux = pd.concat([self.__extractDistrib(col) for col in df], axis=1) if len(column_list)==0 else pd.concat([self.__extractDistrib(col) for col in df[column_list]], axis=1)
+		aux = aux.fillna('')
+		
 		if include_nulls:
 			if len(column_list)==0:
 				null_values = df[df.columns].iloc[2,:]
@@ -88,5 +84,6 @@ class DataOverview:
 				null_values = df[column_list].iloc[2,:]
 				null_df = pd.DataFrame([["null {}".format(e) for e in null_values.to_list() ]], columns=column_list)
 				aux = pd.concat([null_df,aux],axis=0)
-		return aux.fillna('')
+		
+		return aux if axis==1 else aux.transpose()
 
