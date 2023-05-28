@@ -11,7 +11,7 @@ import numpy as np
 
 class DataOverview:
 	possible_dtypes = ['int64','float64','object','bool', 'datetime64']
-	cols = ['dtype','count','null','mean','std','std%','min','max','mode','n_mode','25%','50%','75%']
+	cols = ['dtype','count','null','min','mean','max','std','std%','25%','50%','75%','mode','n_mode']
 	details = pd.DataFrame([], index=cols)
 
 	def __init__(self, dataframe):	
@@ -49,10 +49,10 @@ class DataOverview:
 		aux.loc['mode'] = self.df[aux.columns[0]].mode(dropna=False).iloc[0]
 		aux.loc['n_mode'] = self.df[aux.columns[0]].value_counts().sort_values(ascending=False).iloc[0]
 		if self.df[aux.columns[0]].dtypes in ['int64','float64']:
-			aux.loc['mean'] = self.df[aux.columns[0]].mean()
-			aux.loc['std'] = self.df[aux.columns[0]].std()
-			aux.loc['min'] = self.df[aux.columns[0]].min()
-			aux.loc['max'] = self.df[aux.columns[0]].max()
+			aux.loc['std'] = '{:,.2f}'.format(self.df[aux.columns[0]].std())
+			aux.loc['min'] = '{:,.2f}'.format(self.df[aux.columns[0]].min())
+			aux.loc['mean'] = '{:,.2f}'.format(self.df[aux.columns[0]].mean())
+			aux.loc['max'] = '{:,.2f}'.format(self.df[aux.columns[0]].max())
 			aux.loc['std%'] = '{:.2f}'.format(100*self.df[aux.columns[0]].std()/(self.df[aux.columns[0]].max()-self.df[aux.columns[0]].min()))
 			aux.loc['25%'] = self.df[aux.columns[0]].quantile(q=0.25)
 			aux.loc['50%'] = self.df[aux.columns[0]].quantile(q=0.5)
