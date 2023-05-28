@@ -24,6 +24,10 @@ print(cols)
 describe.show(type="int64")
 describe.show(type="object")
 
+# showing entire describe 
+describe.details
+describe.show(type='all')
+
 ```
 ---
 ####  Informations Showed by our Describe
