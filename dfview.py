@@ -31,12 +31,12 @@ class DataOverview:
 		aux.loc['mode'] = self.df[aux.columns[0]].mode(dropna=False).iloc[0]
 		aux.loc['n_mode'] = self.df[aux.columns[0]].value_counts().sort_values(ascending=False).iloc[0]
 		if self.df[aux.columns[0]].dtypes in ['int64','float64']:
-			aux.loc['std'] = '{:,.2f}'.format(self.df[aux.columns[0]].std())
-			aux.loc['min'] = '{:,.2f}'.format(self.df[aux.columns[0]].min())
-			aux.loc['mean'] = '{:,.2f}'.format(self.df[aux.columns[0]].mean())
-			aux.loc['max'] = '{:,.2f}'.format(self.df[aux.columns[0]].max())
-			aux.loc['median'] = '{:,.2f}'.format(self.df[aux.columns[0]].median())
-			aux.loc['std%'] = '{:.2f}'.format(100*self.df[aux.columns[0]].std()/(self.df[aux.columns[0]].max()-self.df[aux.columns[0]].min()))
+			aux.loc['std'] = float('{:.2f}'.format(self.df[aux.columns[0]].std()))
+			aux.loc['min'] = float('{:.2f}'.format(self.df[aux.columns[0]].min()))
+			aux.loc['mean'] = float('{:.2f}'.format(self.df[aux.columns[0]].mean()))
+			aux.loc['max'] = float('{:.2f}'.format(self.df[aux.columns[0]].max()))
+			aux.loc['median'] = float('{:.2f}'.format(self.df[aux.columns[0]].median()))
+			aux.loc['std%'] = float('{:.2f}'.format(100*self.df[aux.columns[0]].std()/(self.df[aux.columns[0]].max()-self.df[aux.columns[0]].min())))
 			aux.loc['25%'] = self.df[aux.columns[0]].quantile(q=0.25)
 			aux.loc['50%'] = self.df[aux.columns[0]].quantile(q=0.5)
 			aux.loc['75%'] = self.df[aux.columns[0]].quantile(q=0.75)
