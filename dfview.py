@@ -58,6 +58,8 @@ class DataOverview:
 					aux = pd.concat([aux, self.__extractData(i)], axis=1)
 		else:
 			aux = self.details
+		if type=='object':
+			aux = pd.concat( [aux.iloc[:3,:], aux.iloc[-2:,:]], axis=0 )
 		return aux
 	
 	def __extractDistrib(self, col):		
