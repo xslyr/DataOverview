@@ -8,10 +8,11 @@
 
 import pandas as pd
 import numpy as np
+from scipy import stats
 
 class DataOverview:
 	possible_dtypes = ['int64','float64','object','bool', 'datetime64']
-	cols = ['dtype','count','null','min','mean','max','median','std','std%','25%','50%','75%','mode','n_mode']
+	cols = ['dtype','count','null','min','mean','max','median','std','std%','skew','25%','50%','75%','mode','n_mode']
 	details = pd.DataFrame([], index=cols)
 
 	def __init__(self, dataframe):	
@@ -25,9 +26,10 @@ class DataOverview:
 		
 	def __extractData(self, i):
 		aux = pd.DataFrame(np.zeros(shape=(len(self.cols),1)), index=self.cols, columns=[self.df.columns[i]])
+		
 		aux.loc['dtype'] = 'object' if self.df[aux.columns[0]].dtypes == 'O' else self.df[aux.columns[0]].dtypes
 		aux.loc['count'] = self.df[aux.columns[0]].count()
-		aux.loc['null'] = self.df[aux.columns[0] ].isnull().sum()
+		aux.loc['null'] = self.df[aux.columns[0] ].isna().sum()
 		aux.loc['mode'] = self.df[aux.columns[0]].mode(dropna=False).iloc[0]
 		aux.loc['n_mode'] = self.df[aux.columns[0]].value_counts().sort_values(ascending=False).iloc[0]
 		if self.df[aux.columns[0]].dtypes in ['int64','float64']:
@@ -37,9 +39,13 @@ class DataOverview:
 			aux.loc['max'] = float('{:.2f}'.format(self.df[aux.columns[0]].max()))
 			aux.loc['median'] = float('{:.2f}'.format(self.df[aux.columns[0]].median()))
 			aux.loc['std%'] = float('{:.2f}'.format(100*self.df[aux.columns[0]].std()/(self.df[aux.columns[0]].max()-self.df[aux.columns[0]].min())))
+			aux.loc['skew'] = stats.skew( self.df.loc[ self.df[aux.columns[0]].isna()==False ,aux.columns[0] ] )			
 			aux.loc['25%'] = self.df[aux.columns[0]].quantile(q=0.25)
 			aux.loc['50%'] = self.df[aux.columns[0]].quantile(q=0.5)
 			aux.loc['75%'] = self.df[aux.columns[0]].quantile(q=0.75)
+		else:
+			aux.loc[['std','min','mean','max','median','std%','skew','25%','50%','75%']] = ''
+			
 		return aux
 		
 	def columns_type(self):
@@ -75,7 +81,6 @@ class DataOverview:
 		
 		df=self.show('object')
 		aux = pd.concat([self.__extractDistrib(col) for col in df], axis=1) if len(column_list)==0 else pd.concat([self.__extractDistrib(col) for col in df[column_list]], axis=1)
-		aux = aux.fillna('')
 		
 		if include_nulls:
 			if len(column_list)==0:
